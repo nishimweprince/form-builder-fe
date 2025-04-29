@@ -26,7 +26,7 @@ const Register: React.FC = () => {
   return (
     <div>
         <h1>Register</h1>
-        <form onSubmit={handleSubmit} >
+        <form onSubmit={handleSubmit} className="border bg-blue">
         <InputField
         label="username"
         type="text"
@@ -48,7 +48,7 @@ const Register: React.FC = () => {
          value={formData.password}
          onChange={handleChange}
          />
-         <button type="submit">Register</button>
+         <button type="submit" className=" border bg-amber-200">Register</button>
         </form>
         
     </div>

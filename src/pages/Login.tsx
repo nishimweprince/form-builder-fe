@@ -23,21 +23,19 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
-      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
+    <div className="h-screen bg-gray-100 flex items-center justify-center">
+      <div className="w-full  max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
         {/* Left visual panel */}
-        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-10 flex flex-col justify-center relative">
-          <h2 className="text-4xl font-bold leading-snug mb-4">
+        <div className=" text-gray-700 p-10 flex flex-col justify-center">
+          <h2 className="text-4xl font-bold text-center leading-snug mb-6">
             Welcome Back!
           </h2>
           <p className="text-sm opacity-80 mb-12">
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed, sunt.{" "}
           </p>
 
-          <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
-            <div className="h-64 bg-white/20 rounded shadow-inner p-2">
-              <img src={book} className="h-full w-full object-cover rounded" />
-            </div>
+          <div className=" bg-white/20 rounded  p-2">
+            <img src={book} className="h-full w-full object-cover rounded" />
           </div>
         </div>
 

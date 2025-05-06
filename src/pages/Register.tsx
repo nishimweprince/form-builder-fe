@@ -3,7 +3,7 @@ import { registerUser } from "../services/authService";
 import { useNavigate, Link } from "react-router-dom";
 
 type InputFields = {
-  username: string;
+  name: string;
   email: string;
   password: string;
 };
@@ -14,7 +14,7 @@ const Register: React.FC = () => {
 
   const onSubmit: SubmitHandler<InputFields> = async (data) => {
     try {
-      const res = await registerUser(data.username, data.email, data.password);
+      const res = await registerUser(data.name, data.email, data.password);
       localStorage.setItem("token", res.token);
       navigate("/");
     } catch (error) {
@@ -31,7 +31,7 @@ const Register: React.FC = () => {
             <label className="block text-sm font-medium text-gray-600 mb-1">Username</label>
             <input
               type="text"
-              {...register("username")}
+              {...register("name")}
               placeholder="yourusername"
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />

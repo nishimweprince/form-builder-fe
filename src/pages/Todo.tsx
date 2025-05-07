@@ -34,20 +34,21 @@ const Todo: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-100 flex items-center  justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-xl shadow-md p-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">To-Do List</h2>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex mb-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex gap-4 mb-6">
           <input
             type="text"
             {...register("task", { required: true })}
             placeholder="Add a new task"
-            className="flex-grow px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-grow px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          <input type="date"/>
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 transition"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
           >
             Add
           </button>

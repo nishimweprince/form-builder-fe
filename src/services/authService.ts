@@ -2,11 +2,21 @@
 import api from "./api";
 
 export const registerUser = async (name: string, email: string, password: string) => {
-  const res = await api.post("/auth/signup", { name, email, password });
-  return res.data; // expects: { token, user }
+  try {
+    const res = await api.post("/auth/signup", { name, email, password });
+    return res.data; 
+  } catch (error: any) {
+    console.error("Registration failed:", error.response?.data || error.message);
+    throw error;
+  }
 };
 
 export const loginUser = async (email: string, password: string) => {
-  const res = await api.post("/auth/login", { email, password });
-  return res.data; // expects: { token, user }
+  try {
+    const res = await api.post("/auth/login", { email, password });
+    return res.data; 
+  } catch (error: any) {
+    console.error("Login failed:", error.response?.data || error.message);
+    throw error;
+  }
 };

@@ -2,6 +2,8 @@ import { createBrowserRouter } from "react-router-dom";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Todo from "../pages/Todo";
+import CreateTasks from "../pages/createTasks";
+import PrivateRoute from "./PrivateRoute"
 
 const router = createBrowserRouter([
     {
@@ -14,8 +16,19 @@ const router = createBrowserRouter([
     },
     {
         path: "/todo",
-        element: <Todo/>
-    },
+        element: <PrivateRoute />, 
+        children: [
+          {
+            index: true,
+            element: <Todo />,
+          },
+          {
+            path: "create",
+            element: <CreateTasks />,
+          },
+        ],
+      },
+   
 
 ]);
 

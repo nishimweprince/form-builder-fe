@@ -11,12 +11,15 @@ export const registerUser = async (name: string, email: string, password: string
   }
 };
 
-export const loginUser = async (email: string, password: string) => {
+
+export const loginUser = async (email: string, password: string): Promise<string> => {
   try {
     const res = await api.post("/auth/login", { email, password });
-    return res.data; 
+    console.log("Login response:", res.data); // ✅ Debug response
+    return res.data.token; // ✅ Only return the token
   } catch (error: any) {
     console.error("Login failed:", error.response?.data || error.message);
     throw error;
   }
 };
+

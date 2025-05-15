@@ -13,3 +13,11 @@ export interface TaskTypes {
     createdAt?: string;
     updatedAt?: string;
 }
+
+export interface CreateTaskPayload {
+    title: string;
+    description: string;
+    status: "PENDING" | "IN_PROGRESS" | "COMPLETED";
+    priority: "LOW" | "MEDIUM" | "HIGH";
+    assignedToId?: string;
+  }

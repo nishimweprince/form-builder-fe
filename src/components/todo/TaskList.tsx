@@ -1,10 +1,12 @@
 // src/components/TaskTable.tsx
 
 import { useTasks } from '../../hooks/useTasks';
+import {useAuth} from '..//../hooks/useAuth'
 import { Table } from '../Tables/Table';
-import { TaskTypes } from '@/types/task.types';
+import { TaskTypes } from '../../types/task.types';
 
 const TaskList = () => {
+  useAuth();
   const { tasks } = useTasks();
 
   const columns = [

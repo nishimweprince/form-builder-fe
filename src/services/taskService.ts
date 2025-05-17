@@ -1,6 +1,8 @@
 import { TaskTypes, CreateTaskPayload } from "../types/task.types";
 import api from "./api";
 
+
+//GET TASKS
 export const getTasks = async (): Promise<TaskTypes[]> => {
   try {
     const token = localStorage.getItem("token");
@@ -17,7 +19,7 @@ export const getTasks = async (): Promise<TaskTypes[]> => {
   }
 };
 
-
+//CREATE
 export const createTask = async (taskData: CreateTaskPayload): Promise<TaskTypes> => {
   const token = localStorage.getItem("token");
   if (!token) {
@@ -41,3 +43,32 @@ export const createTask = async (taskData: CreateTaskPayload): Promise<TaskTypes
   }
   
 }
+
+
+// UPDATE
+export const updateTask = async (id: string, data: Partial<CreateTaskPayload>): Promise<TaskTypes> => {
+  const token = localStorage.getItem("token");
+  const res = await api.patch(`/tasks/${id}`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
+};
+
+
+//GET TASK BY ID
+export const getTaskById = async (id: string): Promise<TaskTypes> => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("No auth token found");
+  }
+
+  const res = await api.get(`/tasks/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
+};

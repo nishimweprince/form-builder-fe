@@ -1,4 +1,4 @@
-import CreateTask from "../components/todo/createTask"
+import CreateTask from "../components/todo/CreateTask"
 
 
 const CreateTasks = () => {

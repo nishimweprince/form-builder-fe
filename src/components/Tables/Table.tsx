@@ -1,5 +1,5 @@
-// components/common/Table.tsx
 import React from 'react';
+import { Pencil } from 'lucide-react'; // or any icon library you prefer
 
 type Column<T> = {
   header: string;
@@ -9,9 +9,10 @@ type Column<T> = {
 type Props<T> = {
   columns: Column<T>[];
   data: T[];
+  onEdit?: (row: T) => void; // Optional edit handler
 };
 
-export function Table<T extends { id: string }>({ columns, data }: Props<T>) {
+export function Table<T extends { id: string }>({ columns, data, onEdit }: Props<T>) {
   return (
     <div className="overflow-x-auto border rounded">
       <table className="min-w-full table-auto border-collapse">
@@ -22,6 +23,7 @@ export function Table<T extends { id: string }>({ columns, data }: Props<T>) {
                 {col.header}
               </th>
             ))}
+            {onEdit && <th className="p-2 border-b font-semibold">Actions</th>}
           </tr>
         </thead>
         <tbody>
@@ -32,6 +34,17 @@ export function Table<T extends { id: string }>({ columns, data }: Props<T>) {
                   {String(row[col.accessor])}
                 </td>
               ))}
+              {onEdit && (
+                <td className="p-2 border-b">
+                  <button
+                    onClick={() => onEdit(row)}
+                    className="text-blue-600 hover:text-blue-800"
+                    aria-label="Edit"
+                  >
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

@@ -20,13 +20,13 @@ const Login: React.FC = () => {
 
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
     try {
-      const token = await loginUser(data.email, data.password); // ✅ Use returned token
-      console.log("Received token:", token); // ✅ Confirm it's defined
-      localStorage.setItem("token", token);
-      navigate("/todo");
+      const res = await loginUser(data.email, data.password);
+      console.log("RES:", res); 
+      localStorage.setItem("token", res.data.token); 
+        navigate('/todo')
+      
     } catch (error) {
       console.error("Login error:", error);
-      // Optionally show error to user
     }
   };
 

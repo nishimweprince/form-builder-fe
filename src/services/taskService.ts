@@ -72,3 +72,18 @@ export const getTaskById = async (id: string): Promise<TaskTypes> => {
 
   return res.data;
 };
+
+//DELETE TASK
+
+export const deleteTask = async (id: string) : Promise<TaskTypes> =>{
+  const token = localStorage.getItem("token");
+  if(!token){
+    throw new Error("No auth token found ");
+  }
+  const res = await api.delete(`/tasks/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data
+}

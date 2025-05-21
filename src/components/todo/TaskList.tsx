@@ -3,11 +3,13 @@ import { useAuth } from '../../hooks/useAuth';
 import { Table } from '../Tables/Table';
 import { TaskTypes } from '../../types/task.types';
 import { useNavigate } from 'react-router-dom';
+import {useDeleteTask} from '../../hooks/useDeleteTask'
 
 const TaskList = () => {
   useAuth();
-  const { tasks } = useTasks();
+  const { tasks, refetch } = useTasks();
   const navigate = useNavigate();
+  const { handleDelete } = useDeleteTask();
 
   const columns = [
     { header: 'Title', accessor: 'title' },
@@ -26,7 +28,17 @@ const TaskList = () => {
   const handleEdit = (task: TaskTypes) => {
     navigate(`/todo/edit/${task.id}`);
   };
-
+  const handleDeleteClick = async (task: TaskTypes) => {
+    console.log("Deleting task with id:", task.id);
+    const confirmed = window.confirm(`Are you sure you want to delete "${task.title}"?`);
+    if (confirmed) {
+      const result = await handleDelete(task.id);
+      if (result) {
+        refetch();
+      }
+    }
+  };
+  
   return (
     <div className="p-4">
       <h2 className="text-xl font-semibold mb-4">Tasks</h2>
@@ -34,6 +46,7 @@ const TaskList = () => {
         columns={columns}
         data={formattedTasks}
         onEdit={handleEdit} // 👈 Pass the handler here
+        onDelete={handleDeleteClick}
       />
     </div>
   );

@@ -1,5 +1,6 @@
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { TaskTypes, CreateTaskPayload } from "../../types/task.types";
 import { useUpdateTask } from "../../hooks/useUpdate";
 
@@ -21,9 +22,14 @@ const UpdateTask = ({ task, onClose, onSuccess }: Props) => {
   const { update, loading } = useUpdateTask();
 
   const onSubmit = async (data: Partial<CreateTaskPayload>) => {
-    const updated = await update(task.id, data);
-    if (updated) {
-      onSuccess();
+    try {
+      const updated = await update(task.id, data);
+      if (updated) {
+        toast.success("Task updated successfully!");
+        onSuccess();
+      }
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to update task");
     }
   };
 

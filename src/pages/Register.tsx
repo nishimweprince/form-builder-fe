@@ -23,8 +23,9 @@ const Register: React.FC = () => {
       const res = await registerUser(data.name, data.email, data.password);
       localStorage.setItem("token", res.token);
       navigate("/");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Registration error:", error);
+      alert(error?.response?.data?.message || "Registration failed. Please try again.");
     }
   };
 

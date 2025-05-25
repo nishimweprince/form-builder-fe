@@ -7,7 +7,7 @@ type Props = {
 const InputErrorMessage: React.FC<Props> = ({ error }) => {
   if (!error) return null;
 
-  return <p className="text-red-500 text-xs mt-1">{error}</p>;
+  return <p className="text-sm text-red-600 mt-1">{error}</p>;
 };
 
 export default InputErrorMessage;

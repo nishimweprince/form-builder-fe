@@ -1,8 +1,11 @@
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from "@mui/material";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { TaskTypes, CreateTaskPayload } from "../../types/task.types";
 import { useUpdateTask } from "../../hooks/useUpdate";
+import InputField from "../InputFields/InputField";
+import TextareaField from "../InputFields/TextareaField";
+import SelectField from "../InputFields/SelectField";
+import InputErrorMessage from "../InputFields/InputErrorMessage";
 
 type Props = {
   task: TaskTypes;
@@ -11,12 +14,16 @@ type Props = {
 };
 
 const UpdateTask = ({ task, onClose, onSuccess }: Props) => {
-  const { register, handleSubmit, formState: { errors } } = useForm<CreateTaskPayload>({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CreateTaskPayload>({
     defaultValues: {
       title: task.title,
       description: task.description,
       priority: task.priority,
-    }
+    },
   });
 
   const { update, loading } = useUpdateTask();
@@ -34,40 +41,74 @@ const UpdateTask = ({ task, onClose, onSuccess }: Props) => {
   };
 
   return (
-    <Dialog open onClose={onClose}>
-      <DialogTitle>Edit Task</DialogTitle>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogContent className="flex flex-col gap-4">
-          <TextField
-            label="Title"
-            {...register("title", { required: "Title is required" })}
-            error={!!errors.title}
-            helperText={errors.title?.message}
-            fullWidth
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-lg border border-gray-200">
+        <h2 className="text-xl font-semibold -text-gray-800 mb-4 text-blue">Edit Task</h2>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <Controller
+            name="title"
+            control={control}
+            rules={{ required: "Title is required" }}
+            render={({ field }) => (
+              <div>
+                <InputField label="Title" {...field} />
+                <InputErrorMessage error={errors.title?.message} />
+              </div>
+            )}
           />
-          <TextField
-            label="Description"
-            {...register("description")}
-            fullWidth
+
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => (
+              <div>
+                <TextareaField label="Description" {...field} />
+                <InputErrorMessage error={errors.description?.message} />
+              </div>
+            )}
           />
-          <TextField
-            label="Priority"
-            type="number"
-            {...register("priority", {
-              min: { value: 1, message: "Min 1" },
-              max: { value: 5, message: "Max 5" },
-            })}
-            fullWidth
+
+          <Controller
+            name="priority"
+            control={control}
+            rules={{ required: "Priority is required" }}
+            render={({ field }) => (
+              <div>
+                <SelectField
+                  label="Priority"
+                  options={[
+                    { label: "Low", value: "LOW" },
+                    { label: "Medium", value: "MEDIUM" },
+                    { label: "High", value: "HIGH" },
+                  ]}
+                  {...field}
+                />
+                <InputErrorMessage error={errors.priority?.message} />
+              </div>
+            )}
           />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose} disabled={loading}>Cancel</Button>
-          <Button type="submit" variant="contained" disabled={loading}>
-            Update
-          </Button>
-        </DialogActions>
-      </form>
-    </Dialog>
+
+          <div className="flex justify-end gap-2 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={loading}
+              className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            >
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 

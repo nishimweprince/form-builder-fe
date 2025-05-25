@@ -1,23 +1,29 @@
 // src/pages/EditTask.tsx
 
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Controller, useForm } from 'react-hook-form';
-import { getTasks } from '../services/taskService';
-import { useUpdateTask } from '../hooks/useUpdate';
-import InputField from '../components/InputFields/InputField';
-import TextareaField from '../components/InputFields/TextareaField';
-import SelectField from '../components/InputFields/SelectField';
-import InputErrorMessage from '../components/InputFields/InputErrorMessage';
-import { CreateTaskPayload, TaskTypes } from '../types/task.types';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { getTasks } from "../services/taskService";
+import { useUpdateTask } from "../hooks/useUpdate";
+import InputField from "../components/InputFields/InputField";
+import TextareaField from "../components/InputFields/TextareaField";
+import SelectField from "../components/InputFields/SelectField";
+import InputErrorMessage from "../components/InputFields/InputErrorMessage";
+import { CreateTaskPayload, TaskTypes } from "../types/task.types";
 
 const EditTask: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { update, loading } = useUpdateTask();
-
   const [task, setTask] = useState<TaskTypes | null>(null);
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<Partial<CreateTaskPayload>>();
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<Partial<CreateTaskPayload>>();
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -31,27 +37,30 @@ const EditTask: React.FC = () => {
     };
     fetchTask();
   }, [id, reset]);
-  
+
   const onSubmit = async (data: Partial<CreateTaskPayload>) => {
     try {
-      const { title, description, status, priority, assignedToId } = data;
-      await update(id!, { title, description, status, priority, assignedToId });
-      navigate('/todo');
-    } catch (error) {
-      console.error('Error updating task:', error);
+      await update(id!, data);
+      toast.success("Task updated successfully!");
+      navigate("/todo");
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to update task");
     }
   };
-  
 
-  if (!task) return <p>Loading task...</p>;
+  if (!task) {
+    return <div className="text-center text-gray-500 py-10">Loading task...</div>;
+  }
 
   return (
-    <div>
-      <h2 className="text-xl font-bold mb-4">Edit Task</h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
+    <div className="max-w-2xl mx-auto bg-white mt-10 p-6 rounded-2xl shadow-lg border border-gray-200">
+      <h2 className="text-2xl font-bold text-blue-600 mb-6">Edit Task</h2>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Controller
           name="title"
           control={control}
+          rules={{ required: "Title is required" }}
           render={({ field }) => (
             <div>
               <InputField label="Title" {...field} />
@@ -74,14 +83,15 @@ const EditTask: React.FC = () => {
         <Controller
           name="status"
           control={control}
+          rules={{ required: "Status is required" }}
           render={({ field }) => (
             <div>
               <SelectField
                 label="Status"
                 options={[
-                  { label: 'Pending', value: 'PENDING' },
-                  { label: 'In Progress', value: 'IN_PROGRESS' },
-                  { label: 'Completed', value: 'COMPLETED' },
+                  { label: "Pending", value: "PENDING" },
+                  { label: "In Progress", value: "IN_PROGRESS" },
+                  { label: "Completed", value: "COMPLETED" },
                 ]}
                 {...field}
               />
@@ -93,14 +103,15 @@ const EditTask: React.FC = () => {
         <Controller
           name="priority"
           control={control}
+          rules={{ required: "Priority is required" }}
           render={({ field }) => (
             <div>
               <SelectField
                 label="Priority"
                 options={[
-                  { label: 'Low', value: 'LOW' },
-                  { label: 'Medium', value: 'MEDIUM' },
-                  { label: 'High', value: 'HIGH' },
+                  { label: "Low", value: "LOW" },
+                  { label: "Medium", value: "MEDIUM" },
+                  { label: "High", value: "HIGH" },
                 ]}
                 {...field}
               />
@@ -120,13 +131,15 @@ const EditTask: React.FC = () => {
           )}
         />
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="mt-4 w-full py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-        >
-          {loading ? 'Updating...' : 'Update Task'}
-        </button>
+        <div className="flex justify-end pt-4">
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:opacity-50"
+          >
+            {loading ? "Updating..." : "Update Task"}
+          </button>
+        </div>
       </form>
     </div>
   );

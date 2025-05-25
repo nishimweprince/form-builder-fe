@@ -1,43 +1,50 @@
-import React from 'react'
-import { CreateTaskPayload } from '../../types/task.types'
-import { SubmitHandler, useForm, Controller } from 'react-hook-form'
+// src/pages/CreateTask.tsx
+
+import React from 'react';
+import { CreateTaskPayload } from '../../types/task.types';
+import { SubmitHandler, useForm, Controller } from 'react-hook-form';
 import { useCreateTask } from '../../hooks/useCreateTask';
 import { useNavigate } from 'react-router-dom';
 import InputField from '../InputFields/InputField';
 import InputErrorMessage from '../InputFields/InputErrorMessage';
 import TextareaField from '../InputFields/TextareaField';
 import SelectField from '../InputFields/SelectField';
+import { toast } from 'react-toastify';
 
 const CreateTask: React.FC = () => {
-
-  const {control, handleSubmit, formState: {errors}} = useForm<CreateTaskPayload>({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CreateTaskPayload>({
     defaultValues: {
       title: '',
       description: '',
       status: 'PENDING',
       priority: 'LOW',
-      assignedToId: '',}
+      assignedToId: '',
+    },
   });
-  const {create, loading} = useCreateTask();
-  const navigate = useNavigate()
 
-  const onSubmit: SubmitHandler<CreateTaskPayload> = async (data) =>{
+  const { create, loading } = useCreateTask();
+  const navigate = useNavigate();
+
+  const onSubmit: SubmitHandler<CreateTaskPayload> = async (data) => {
     try {
       await create(data);
-      navigate("/todo");
-      
-    } catch (error) {
-      console.error("error creating task", error);
-      
-      
+      toast.success('Task created successfully!');
+      navigate('/todo');
+    } catch (error: any) {
+      toast.error(error?.message || 'Failed to create task');
+      console.error('Error creating task:', error);
     }
-  }
+  };
 
   return (
-    <div>
-      <h2>Create a new task</h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
+    <div className="max-w-2xl mx-auto mt-10 bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
+      <h2 className="text-2xl font-bold text-blue-600 mb-6">Create a New Task</h2>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Controller
           name="title"
           control={control}
@@ -50,7 +57,7 @@ const CreateTask: React.FC = () => {
           )}
         />
 
-<Controller
+        <Controller
           name="description"
           control={control}
           rules={{ required: 'Description is required' }}
@@ -61,6 +68,7 @@ const CreateTask: React.FC = () => {
             </div>
           )}
         />
+
         <Controller
           name="status"
           control={control}
@@ -80,6 +88,7 @@ const CreateTask: React.FC = () => {
             </div>
           )}
         />
+
         <Controller
           name="priority"
           control={control}
@@ -99,6 +108,7 @@ const CreateTask: React.FC = () => {
             </div>
           )}
         />
+
         <Controller
           name="assignedToId"
           control={control}
@@ -109,17 +119,19 @@ const CreateTask: React.FC = () => {
             </div>
           )}
         />
-        <button
-          type="submit"
-          disabled={loading}
-          className="mt-4 w-full py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-        >
-          {loading ? 'Creating...' : 'Create Task'}
-        </button>
+
+        <div className="flex justify-end pt-4">
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:opacity-50"
+          >
+            {loading ? 'Creating...' : 'Create Task'}
+          </button>
         </div>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default CreateTask
+export default CreateTask;

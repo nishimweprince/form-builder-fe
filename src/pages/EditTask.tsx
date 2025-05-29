@@ -4,12 +4,14 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { getTasks } from "../services/taskService";
+
+import { getTaskById } from "../services/taskService";
 import { useUpdateTask } from "../hooks/useUpdate";
 import InputField from "../components/InputFields/InputField";
 import TextareaField from "../components/InputFields/TextareaField";
 import SelectField from "../components/InputFields/SelectField";
 import InputErrorMessage from "../components/InputFields/InputErrorMessage";
+
 import { CreateTaskPayload, TaskTypes } from "../types/task.types";
 
 const EditTask: React.FC = () => {
@@ -27,12 +29,13 @@ const EditTask: React.FC = () => {
 
   useEffect(() => {
     const fetchTask = async () => {
-      const allTasks = await getTasks();
-      const currentTask = allTasks.find((t) => t.id === id);
-      if (currentTask) {
+      try {
+        const currentTask = await getTaskById(id!);
         setTask(currentTask);
         const { title, description, status, priority, assignedToId } = currentTask;
         reset({ title, description, status, priority, assignedToId });
+      } catch (err) {
+        toast.error("Failed to load task.");
       }
     };
     fetchTask();
@@ -55,6 +58,14 @@ const EditTask: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto bg-white mt-10 p-6 rounded-2xl shadow-lg border border-gray-200">
       <h2 className="text-2xl font-bold text-blue-600 mb-6">Edit Task</h2>
+
+      <button
+        type="button"
+        onClick={() => navigate("/todo")}
+        className="text-blue-500 underline text-sm mb-4"
+      >
+        ← Back to Task List
+      </button>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Controller
@@ -135,9 +146,34 @@ const EditTask: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:opacity-50"
+            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center"
           >
-            {loading ? "Updating..." : "Update Task"}
+            {loading ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5 mr-2 text-white"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                    fill="none"
+                  />
+                  <path
+                    d="M4 12a8 8 0 018-8"
+                    stroke="white"
+                    strokeWidth="4"
+                    fill="none"
+                  />
+                </svg>
+                Updating...
+              </>
+            ) : (
+              "Update Task"
+            )}
           </button>
         </div>
       </form>

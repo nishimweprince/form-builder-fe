@@ -4,7 +4,7 @@ import { getTasks } from "../services/taskService";
 
 export const useTasks = () => {
   const [tasks, setTasks] = useState<TaskTypes[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchTasks = useCallback(async () => {
@@ -12,9 +12,10 @@ export const useTasks = () => {
     try {
       const data = await getTasks();
       setTasks(data);
-      setError(null);
-    } catch (error) {
-      setError("Failed to fetch tasks");
+      setError(null); 
+    } catch (err: any) {
+      console.error("Error fetching tasks:", err);
+      setError(err?.message || "Failed to fetch tasks");
     } finally {
       setLoading(false);
     }
@@ -28,6 +29,6 @@ export const useTasks = () => {
     tasks,
     loading,
     error,
-    refetch: fetchTasks, 
+    refetch: fetchTasks,
   };
 };

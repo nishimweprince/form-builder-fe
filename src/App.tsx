@@ -1,9 +1,10 @@
 // import Register from './pages/Register'
-import Login from './pages/Login'
+import { Toaster } from 'sonner';
 
 const App = () => {
   return (
     <>
+    <Toaster richColors />
      {/* <Register/> */}
      
     </>

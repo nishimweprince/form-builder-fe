@@ -1,5 +1,3 @@
-// src/pages/TaskList.tsx
-
 import { useTasks } from '../../hooks/useTasks';
 import { useAuth } from '../../hooks/useAuth';
 import { Table } from '../Tables/Table';
@@ -25,7 +23,9 @@ const TaskList = () => {
 
   const formattedTasks = tasks.map((task) => ({
     ...task,
-    createdAt: new Date(task.createdAt || '').toLocaleString(),
+    createdAt: task.createdAt
+      ? new Date(task.createdAt).toLocaleString()
+      : 'N/A',
   }));
 
   const handleEdit = (task: TaskTypes) => {
@@ -33,7 +33,9 @@ const TaskList = () => {
   };
 
   const handleDeleteClick = async (task: TaskTypes) => {
-    const confirmed = window.confirm(`Are you sure you want to delete "${task.title}"?`);
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${task.title}"?`
+    );
     if (!confirmed) return;
 
     const success = await handleDelete(task.id);

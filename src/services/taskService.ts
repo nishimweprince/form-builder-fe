@@ -11,6 +11,7 @@ export const getTasks = async (): Promise<TaskTypes[]> => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+ 
     });
     return res.data.data.rows; 
   } catch (error) {

@@ -7,10 +7,12 @@ import { useDeleteTask } from '../../hooks/useDeleteTask';
 import { toast } from 'react-toastify';
 
 const TaskList = () => {
-  useAuth();
+  const { user } = useAuth(); // ✅ Get the logged-in user
   const { tasks, refetch, loading } = useTasks();
   const { handleDelete } = useDeleteTask();
   const navigate = useNavigate();
+
+  
 
   const columns = [
     { header: 'Title', accessor: 'title' },
@@ -21,8 +23,15 @@ const TaskList = () => {
     { header: 'Created At', accessor: 'createdAt' },
   ] as const satisfies { header: string; accessor: keyof TaskTypes }[];
 
-  const formattedTasks = tasks.map((task) => ({
+  // ✅ Filter tasks assigned to the current user
+  const myTasks = (tasks ?? []).filter(
+    (task) => task.assignedToId === user?.id
+  );
+  
+
+  const formattedTasks = myTasks.map((task) => ({
     ...task,
+    assignedToId: task?.assignedTo?.name || 'Unassigned',
     createdAt: task.createdAt
       ? new Date(task.createdAt).toLocaleString()
       : 'N/A',
@@ -50,7 +59,7 @@ const TaskList = () => {
   return (
     <div className="max-w-7xl mx-auto p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-blue-600">Task List</h2>
+        <h2 className="text-2xl font-bold text-blue-600">My Tasks</h2>
         <button
           onClick={() => navigate('/todo/create')}
           className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition"
@@ -61,8 +70,8 @@ const TaskList = () => {
 
       {loading ? (
         <div className="text-center py-10 text-gray-500">Loading tasks...</div>
-      ) : tasks.length === 0 ? (
-        <div className="text-center py-10 text-gray-500">No tasks found.</div>
+      ) : myTasks.length === 0 ? (
+        <div className="text-center py-10 text-gray-500">No tasks assigned to you.</div>
       ) : (
         <Table<TaskTypes>
           columns={columns}
@@ -74,5 +83,6 @@ const TaskList = () => {
     </div>
   );
 };
+
 
 export default TaskList;

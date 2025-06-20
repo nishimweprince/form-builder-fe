@@ -1,11 +1,9 @@
-import TaskTable from '../components/todo/TaskList';
-import { Link, Outlet } from 'react-router-dom';
-import Button from '@mui/material/Button';
+import TaskList from '../components/todo/TaskList';
 
 const Todo = () => {
   return (
     <div>
-      <TaskTable />
+      <TaskList />
     </div>
   );
 };

@@ -10,6 +10,11 @@ export interface TaskTypes {
     priority: TaskPriority;
     createdById: string;
     assignedToId: string;
+    assignedTo?: {
+        id: string;
+        name: string;
+        email?: string;
+      };
     createdAt?: string;
     updatedAt?: string;
 }
@@ -19,5 +24,9 @@ export interface CreateTaskPayload {
     description: string;
     status: "PENDING" | "IN_PROGRESS" | "COMPLETED";
     priority: "LOW" | "MEDIUM" | "HIGH";
-    assignedToId?: string;
+    assignedTo?: {
+      id: string;
+      name: string;
+      email?: string;
+    };
   }

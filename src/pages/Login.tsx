@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import book from "../assets/book.avif";
 import InputField from "../components/InputFields/InputField";
 import InputErrorMessage from "../components/InputFields/InputErrorMessage";
+import { useState } from "react";
 
 type LoginFormInputs = {
   email: string;
@@ -16,9 +17,11 @@ const Login: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormInputs>();
+  const [loading,setLoading] = useState(false);
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
+    setLoading(true);
     try {
       const res = await loginUser(data.email, data.password);
       console.log("RES:", res);
@@ -31,20 +34,9 @@ const Login: React.FC = () => {
 
   return (
     <div className="h-screen bg-gray-100 flex items-center justify-center">
-      <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
+      <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl">
         {/* Left visual panel */}
-        <div className="text-gray-700 p-10 flex flex-col justify-center">
-          <h2 className="text-4xl font-bold text-center leading-snug mb-6">
-            Welcome Back!
-          </h2>
-          <p className="text-sm opacity-80 mb-12">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed, sunt.
-          </p>
-          <div className="relative rounded overflow-hidden">
-            <img src={book} className="h-full w-full object-cover rounded" />
-            <div className="absolute inset-0 bg-black/10" />
-          </div>
-        </div>
+        
 
         {/* Right login panel */}
         <div className="p-10 flex flex-col justify-center">
@@ -125,7 +117,7 @@ const Login: React.FC = () => {
               type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl transition duration-200 text-sm font-semibold shadow"
             >
-              Login
+              {loading ? 'Logging in ....' : 'Login'}
             </button>
 
             {/* Sign Up */}

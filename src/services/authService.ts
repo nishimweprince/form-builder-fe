@@ -1,5 +1,6 @@
 // src/services/authService.ts
 import api from "./api";
+import {User} from "../types/user.type"
 
 export const registerUser = async (name: string, email: string, password: string) => {
   try {
@@ -24,6 +25,35 @@ export const loginUser = async (email: string, password: string) => {
     throw error;
   }
 };
+
+export const getUsers = async (): Promise<User[]> => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await api.get("/users", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Cache-Control': 'no-cache', // <-- optional for forcing refresh
+      },
+    });
+
+    // ✅ Place this line here, immediately after getting the response
+    const users = res.data?.data?.rows;
+
+    console.log("Users loaded:", users); // <-- Add this to debug
+
+    if (Array.isArray(users)) return users;
+
+    console.error("Unexpected response structure:", res.data);
+    return [];
+
+  } catch (error) {
+    console.error("Failed to fetch users", error);
+    return [];
+  }
+};
+
+
 
 
 

@@ -1,71 +1,34 @@
-// src/pages/EditTask.tsx
+// pages/EditTask.tsx
+import { useParams } from "react-router-dom";
+import { Controller } from "react-hook-form";
 
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Controller, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-
-import { getTaskById } from "../services/taskService";
-import { useUpdateTask } from "../hooks/useUpdate";
+import { useTaskById } from "../hooks/useTaskById";
+import { useEditTaskForm } from "../hooks/useEditTaskForm";
 import InputField from "../components/InputFields/InputField";
 import TextareaField from "../components/InputFields/TextareaField";
 import SelectField from "../components/InputFields/SelectField";
 import InputErrorMessage from "../components/InputFields/InputErrorMessage";
+import { useUsers } from "../hooks/UseUsers";
 
-import { CreateTaskPayload, TaskTypes } from "../types/task.types";
-
-const EditTask: React.FC = () => {
+const EditTask = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const { update, loading } = useUpdateTask();
-  const [task, setTask] = useState<TaskTypes | null>(null);
-
+  const { task, loading: taskLoading } = useTaskById(id!);
+  const {users, loading:usersLoading, error} = useUsers()
   const {
     control,
+    errors,
     handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<Partial<CreateTaskPayload>>();
+    onSubmit,
+    isUpdating,
+  } = useEditTaskForm(task, id!);
 
-  useEffect(() => {
-    const fetchTask = async () => {
-      try {
-        const currentTask = await getTaskById(id!);
-        setTask(currentTask);
-        const { title, description, status, priority, assignedToId } = currentTask;
-        reset({ title, description, status, priority, assignedToId });
-      } catch (err) {
-        toast.error("Failed to load task.");
-      }
-    };
-    fetchTask();
-  }, [id, reset]);
-
-  const onSubmit = async (data: Partial<CreateTaskPayload>) => {
-    try {
-      await update(id!, data);
-      toast.success("Task updated successfully!");
-      navigate("/todo");
-    } catch (error: any) {
-      toast.error(error?.message || "Failed to update task");
-    }
-  };
-
-  if (!task) {
+  if (taskLoading) {
     return <div className="text-center text-gray-500 py-10">Loading task...</div>;
   }
 
   return (
     <div className="max-w-2xl mx-auto bg-white mt-10 p-6 rounded-2xl shadow-lg border border-gray-200">
       <h2 className="text-2xl font-bold text-blue-600 mb-6">Edit Task</h2>
-
-      <button
-        type="button"
-        onClick={() => navigate("/todo")}
-        className="text-blue-500 underline text-sm mb-4"
-      >
-        ← Back to Task List
-      </button>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Controller
@@ -136,7 +99,18 @@ const EditTask: React.FC = () => {
           control={control}
           render={({ field }) => (
             <div>
-              <InputField label="Assigned To (User ID)" {...field} />
+              <SelectField
+  label="Assign to"
+  options={
+    usersLoading
+      ? [{ label: "Loading users...", value: "" }]
+      : [{ label: "Unassigned", value: "" }, ...users.map(user => ({
+          label: user.name,
+          value: user.id,
+        }))]
+  }
+/>
+
               <InputErrorMessage error={errors.assignedToId?.message} />
             </div>
           )}
@@ -145,10 +119,10 @@ const EditTask: React.FC = () => {
         <div className="flex justify-end pt-4">
           <button
             type="submit"
-            disabled={loading}
+            disabled={isUpdating}
             className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center"
           >
-            {loading ? (
+            {isUpdating ? (
               <>
                 <svg
                   className="animate-spin h-5 w-5 mr-2 text-white"

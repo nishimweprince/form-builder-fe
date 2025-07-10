@@ -11,10 +11,10 @@ export interface TaskTypes {
     createdById: string;
     assignedToId: string;
     assignedTo?: {
-        id: string;
-        name: string;
-        email?: string;
-      };
+      id: string;
+      name: string;
+      email: string;
+    };
     createdAt?: string;
     updatedAt?: string;
 }
@@ -24,9 +24,11 @@ export interface CreateTaskPayload {
     description: string;
     status: "PENDING" | "IN_PROGRESS" | "COMPLETED";
     priority: "LOW" | "MEDIUM" | "HIGH";
-    assignedTo?: {
-      id: string;
-      name: string;
-      email?: string;
-    };
+    assignedToId?: string;
   }
+
+  export interface TaskDisplay extends TaskTypes {
+    assignedToName: string;
+    createdAt: string;
+  }
+  

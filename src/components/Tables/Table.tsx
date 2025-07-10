@@ -1,5 +1,4 @@
-import React from 'react';
-import { Pencil } from 'lucide-react'; // or any icon library you prefer
+import { Pencil, Trash2 } from 'lucide-react';
 
 type Column<T> = {
   header: string;
@@ -9,39 +8,79 @@ type Column<T> = {
 type Props<T> = {
   columns: Column<T>[];
   data: T[];
-  onEdit?: (row: T) => void; // Optional edit handler
+  onDelete?: (row: T) => void;
+  onEdit?: (row: T) => void;
 };
 
-export function Table<T extends { id: string }>({ columns, data, onEdit }: Props<T>) {
+export function Table<T extends { id: string }>({
+  columns,
+  data,
+  onEdit,
+  onDelete,
+}: Props<T>) {
   return (
-    <div className="overflow-x-auto border rounded">
+    <div className="overflow-x-auto border border-gray-200 rounded-xl shadow-sm">
       <table className="min-w-full table-auto border-collapse">
-        <thead className="bg-gray-100 text-left">
+        <thead className="bg-gray-100 text-left text-sm text-gray-600 uppercase tracking-wider select-none">
           <tr>
             {columns.map((col) => (
-              <th key={col.accessor as string} className="p-2 border-b font-semibold">
+              <th
+                key={col.accessor as string}
+                className="p-3 border-b font-semibold"
+              >
                 {col.header}
               </th>
             ))}
-            {onEdit && <th className="p-2 border-b font-semibold">Actions</th>}
+            {onEdit && (
+              <th className="p-3 border-b font-semibold text-center w-16">
+                Edit
+              </th>
+            )}
+            {onDelete && (
+              <th className="p-3 border-b font-semibold text-center w-16">
+                Delete
+              </th>
+            )}
           </tr>
         </thead>
-        <tbody>
-          {data.map((row) => (
-            <tr key={row.id} className="hover:bg-gray-50">
+        <tbody className="text-sm text-gray-700">
+          {data.map((row, i) => (
+            <tr
+              key={row.id}
+              className={`transition-colors duration-200 ${
+                i % 2 === 0 ? "bg-white" : "bg-gray-50"
+              } hover:bg-blue-50`}
+            >
               {columns.map((col) => (
-                <td key={col.accessor as string} className="p-2 border-b">
+                <td
+                  key={col.accessor as string}
+                  className="p-3 border-b align-middle max-w-xs truncate"
+                  title={String(row[col.accessor])}
+                >
                   {String(row[col.accessor])}
                 </td>
               ))}
               {onEdit && (
-                <td className="p-2 border-b">
+                <td className="p-3 border-b text-center align-middle">
                   <button
                     onClick={() => onEdit(row)}
-                    className="text-blue-600 hover:text-blue-800"
+                    className="text-blue-600 hover:text-blue-800 transition"
                     aria-label="Edit"
+                    title="Edit"
                   >
-                    <Pencil className="w-4 h-4" />
+                    <Pencil className="w-5 h-5" />
+                  </button>
+                </td>
+              )}
+              {onDelete && (
+                <td className="p-3 border-b text-center align-middle">
+                  <button
+                    onClick={() => onDelete(row)}
+                    className="text-red-600 hover:text-red-800 transition"
+                    aria-label="Delete"
+                    title="Delete"
+                  >
+                    <Trash2 className="w-5 h-5" />
                   </button>
                 </td>
               )}

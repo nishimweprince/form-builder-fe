@@ -4,7 +4,9 @@ import Register from "../pages/Register";
 import Todo from "../pages/Todo";
 import CreateTasks from "../pages/CreateTasks";
 import PrivateRoute from "./PrivateRoute";
-import EditTask from "../pages/EditTask"
+import EditTask from "../pages/EditTask";
+import MainLayout from "../layout/MainLayout"; // adjust path
+import NotFound from "../pages/NotFound"
 
 const router = createBrowserRouter([
   {
@@ -17,21 +19,31 @@ const router = createBrowserRouter([
   },
   {
     path: "/todo",
-    element: <PrivateRoute />,
+    element: <PrivateRoute />, // protects all children
     children: [
       {
-        index: true,
-        element: <Todo />,
+        element: <MainLayout />, // this wraps the sidebar + content
+        children: [
+          {
+            index: true,
+            element: <Todo />,
+          },
+          {
+            path: "create",
+            element: <CreateTasks />,
+          },
+          {
+            path: "edit/:id",
+            element: <EditTask />,
+          },
+        ],
       },
-      {
-        path: "create",
-        element: <CreateTasks />,
-      },
-      { 
-        path: "edit/:id", 
-        element: <EditTask /> },
     ],
   },
+  {
+    path: "*",
+    element: <NotFound />,
+  }
 ]);
 
 export default router;

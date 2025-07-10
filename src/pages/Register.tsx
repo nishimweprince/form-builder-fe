@@ -3,11 +3,13 @@ import { registerUser } from "../services/authService";
 import { useNavigate, Link } from "react-router-dom";
 import InputField from "../components/InputFields/InputField";
 import InputErrorMessage from "../components/InputFields/InputErrorMessage";
+import {toast} from "sonner"
 
 type RegisterFormInputs = {
   name: string;
   email: string;
   password: string;
+  confirmPassword:string;
 };
 
 const Register: React.FC = () => {
@@ -15,6 +17,7 @@ const Register: React.FC = () => {
     control,
     handleSubmit,
     formState: { errors },
+    watch
   } = useForm<RegisterFormInputs>();
   const navigate = useNavigate();
 
@@ -22,9 +25,11 @@ const Register: React.FC = () => {
     try {
       const res = await registerUser(data.name, data.email, data.password);
       localStorage.setItem("token", res.token);
+      toast.success("Registered successfully");
       navigate("/");
-    } catch (error) {
-      console.error("Registration error:", error);
+    } catch (error: any) {
+      toast.error("Registration error:", error);
+      alert(error?.response?.data?.message || "Registration failed. Please try again.");
     }
   };
 
@@ -108,6 +113,28 @@ const Register: React.FC = () => {
               </div>
             )}
           />
+
+<Controller
+  name="confirmPassword"
+  control={control}
+  rules={{
+    required: "Please confirm your password",
+    validate: (value) =>
+      value === watch("password") || "Passwords do not match",
+  }}
+  render={({ field }) => (
+    <div>
+      <InputField
+        label="Confirm Password"
+        placeholder="••••••••"
+        type="password"
+        {...field}
+      />
+      <InputErrorMessage error={errors.confirmPassword?.message} />
+    </div>
+  )}
+/>
+
 
           {/* Submit Button */}
           <button

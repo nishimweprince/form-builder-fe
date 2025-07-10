@@ -1,22 +1,10 @@
-import TaskTable from '../components/todo/TaskList';
-import { Link, Outlet } from 'react-router-dom';
-import Button from '@mui/material/Button';
+import TaskList from '../components/todo/TaskList';
+import SideBar from '../components/Sidebar/SideBar'
 
 const Todo = () => {
   return (
     <div>
-      <Button
-        variant="contained"
-        component={Link}
-        to="create"
-        sx={{ mb: 2 }} 
-      >
-        Create a New Task
-      </Button>
-
-      <TaskTable />
-      
-
+      <TaskList />
     </div>
   );
 };

@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import book from "../assets/book.avif";
 import InputField from "../components/InputFields/InputField";
 import InputErrorMessage from "../components/InputFields/InputErrorMessage";
+import { useState } from "react";
 
 type LoginFormInputs = {
   email: string;
@@ -16,15 +17,16 @@ const Login: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormInputs>();
+  const [loading,setLoading] = useState(false);
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
+    setLoading(true);
     try {
       const res = await loginUser(data.email, data.password);
-      console.log("RES:", res); 
-      localStorage.setItem("token", res.data.token); 
-        navigate('/todo')
-      
+      console.log("RES:", res);
+      localStorage.setItem("token", res.data.token);
+      navigate("/todo");
     } catch (error) {
       console.error("Login error:", error);
     }
@@ -32,19 +34,9 @@ const Login: React.FC = () => {
 
   return (
     <div className="h-screen bg-gray-100 flex items-center justify-center">
-      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
+      <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl">
         {/* Left visual panel */}
-        <div className="text-gray-700 p-10 flex flex-col justify-center">
-          <h2 className="text-4xl font-bold text-center leading-snug mb-6">
-            Welcome Back!
-          </h2>
-          <p className="text-sm opacity-80 mb-12">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed, sunt.
-          </p>
-          <div className="bg-white/20 rounded p-2">
-            <img src={book} className="h-full w-full object-cover rounded" />
-          </div>
-        </div>
+        
 
         {/* Right login panel */}
         <div className="p-10 flex flex-col justify-center">
@@ -56,53 +48,55 @@ const Login: React.FC = () => {
             <Controller
               name="email"
               control={control}
-              rules={{ required: "Email is required",
+              rules={{
+                required: "Email is required",
                 validate: (value) =>
                   value.includes("@") || "Email must include @",
-               }}
-              render={({ field, }) => (
+              }}
+              render={({ field }) => (
                 <div>
                   <InputField
-                  label="Email"
-                  placeholder="you@example.com"
-                  type="email"
-                  {...field}
-                />
+                    label="Email"
+                    placeholder="you@example.com"
+                    type="email"
+                    {...field}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
                   <InputErrorMessage error={errors.email?.message} />
                 </div>
-                
-
               )}
             />
-
 
             {/* Password */}
             <Controller
               name="password"
               control={control}
-              rules={{ 
-                required: "Password is required", 
+              rules={{
+                required: "Password is required",
                 minLength: {
                   value: 6,
                   message: "Password must be at least 6 characters",
                 },
                 validate: (value) => {
-                  if (!/[A-Z]/.test(value)) return "Password must include an uppercase letter";
-                  if (!/[a-z]/.test(value)) return "Password must include an lowercase letter";
-                  if (!/[0-9]/.test(value)) return "Password must include a number";
+                  if (!/[A-Z]/.test(value))
+                    return "Password must include an uppercase letter";
+                  if (!/[a-z]/.test(value))
+                    return "Password must include an lowercase letter";
+                  if (!/[0-9]/.test(value))
+                    return "Password must include a number";
                   return true;
                 },
               }}
-              render={({ field}) => (
+              render={({ field }) => (
                 <div>
                   <InputField
-                  label="Password"
-                  placeholder="••••••••"
-                  type="password"
-                  
-                  {...field}
-                />
-                <InputErrorMessage error={errors.password?.message} />
+                    label="Password"
+                    placeholder="••••••••"
+                    type="password"
+                    {...field}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                  <InputErrorMessage error={errors.password?.message} />
                 </div>
               )}
             />
@@ -110,7 +104,7 @@ const Login: React.FC = () => {
             {/* Options */}
             <div className="flex items-center justify-between text-sm">
               <label className="flex items-center gap-2 text-gray-600">
-                <input type="checkbox" className="accent-blue-600" />
+              <input type="checkbox" className="w-4 h-4 accent-blue-600" />
                 Remember me
               </label>
               <a href="#" className="text-blue-600 hover:underline">
@@ -121,9 +115,9 @@ const Login: React.FC = () => {
             {/* Submit */}
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl transition duration-200 text-sm font-semibold shadow"
             >
-              Login
+              {loading ? 'Logging in ....' : 'Login'}
             </button>
 
             {/* Sign Up */}
@@ -143,16 +137,16 @@ const Login: React.FC = () => {
 
             {/* Google Login */}
             <button
-              type="button"
-              className="w-full flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition text-sm"
-            >
-              <img
-                src="https://www.svgrepo.com/show/475656/google-color.svg"
-                alt="Google"
-                className="w-5 h-5"
-              />
-              Continue with Google
-            </button>
+  type="button"
+  className="w-full flex items-center justify-center gap-2 border border-gray-300 py-2.5 px-4 rounded-lg hover:bg-gray-50 transition text-sm font-medium shadow-sm"
+>
+  <img
+    src="https://www.svgrepo.com/show/475656/google-color.svg"
+    alt="Google"
+    className="w-5 h-5"
+  />
+  Continue with Google
+</button>
           </form>
         </div>
       </div>
